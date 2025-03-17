@@ -1,1 +1,2 @@
 Flask==2.3.2
+psycopg[c]==3.2.6
