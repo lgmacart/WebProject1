@@ -36,10 +36,12 @@ def upload_file():
         message = "Invalid selection"
     else:
         file = request.files['file']
+        size = file.read()
+        
         if file.filename == '':
             message = "No file selected"            
         else:
-            # Save the file or process it as needed
+            # Save the file or process it as needed            
             filename = file.filename
             fq_filename = file_store + filename
             is_file = os.path.isfile(fq_filename)
@@ -53,7 +55,7 @@ def upload_file():
                 else:
                     message = "Failed to load"
 
-    return render_template('test2.html', message=message, filename=filename)   
+    return render_template('test2.html', message=message, filename=filename, size=size)   
     
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
