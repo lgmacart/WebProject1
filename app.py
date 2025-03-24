@@ -3,6 +3,7 @@ import subprocess
 import json
 import time
 import os
+import random
 
 app = Flask(__name__)
 
@@ -31,27 +32,50 @@ def trypostgresql():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    file_store = "/app/documents/"
+    message = ""
+    is_match = False
+    tmp_file_store = "/app/documents/tmp/"
+    file_store = "/app/documents/store/"
     if 'file' not in request.files:
         message = "Invalid selection"
     else:
-        file = request.files['file']
-        size = file.read()
-        
+        file = request.files['file']        
+        size = len(file.read())
+        file.seek(0)
         if file.filename == '':
             message = "No file selected"            
         else:
             # Save the file or process it as needed            
             filename = file.filename
-            fq_filename = file_store + filename
-            is_file = os.path.isfile(fq_filename)
-            if is_file:
-                message = "File already exists"
+            fq_filename_tmp = tmp_file_store + filename
+            #fq_filename = file_store + filename
+            fq_filename = file_store + filename + "." + str(random.randint(10000, 99999))
+            is_file = os.path.isfile(fq_filename_tmp)
+            if is_file:                
+                message = "File already exists in tmp"
             else:
-                file.save(fq_filename)
-                is_file = os.path.isfile(fq_filename) 
-                if is_file:        
-                    message = "Uploaded successfully"
+                file.save(fq_filename_tmp) 
+                is_file = os.path.isfile(fq_filename_tmp) 
+                if is_file:
+                    arr = os.listdir(file_store)
+                    for file in arr:
+                        if file.startswith(filename):
+                            file = file_store + file
+                            result = subprocess.run(["diff", "-q", fq_filename_tmp, file], check=False, capture_output=True).stdout
+                            result = len(result)
+                            if result == 0:                            
+                                is_match = True
+                                break
+                            else:
+                                is_match = False
+
+                    if not is_match:
+                        result = subprocess.run(["mv", fq_filename_tmp, fq_filename], check=True, capture_output=True).stdout                  
+                        message = "Uploaded successfully"
+                    else:
+                        result = subprocess.run(["rm", fq_filename_tmp], check=True, capture_output=True).stdout
+                        message = "Files matches an existing file"
+                    
                 else:
                     message = "Failed to load"
 
