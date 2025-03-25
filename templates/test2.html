@@ -6,17 +6,20 @@
     </style>    
 </head>
 <body>
-<form method="POST" action="/upload" enctype="multipart/form-data">    
-    <p><input type="file" name="file" id="file"></p>
+<form method="POST" action="/multiupload" enctype="multipart/form-data">    
+    <p><input type="file" name="file" id="file" multiple></p>
     <p>
-        <label class=custom_label for="filename">File</label>
-        <input type="text" name="filename" size="40" value="{{ filename }}"><br>
-        <label class=custom_label for="Size">Size</label>
-        <input type="text" name="size" size="40" value="{{ size }} bytes"><br> 
-        <label class=custom_label for="Status">Status</label>
-        <input type="text" name="status" size="40" value="{{ message }}">       
+        {%for file in files%}
+            <label class=custom_label for="filename">File</label>
+            <input type="text" name="filename[]" size="40" value="{{file.name}}">
+            <input type="text" name="size[]" size="10" value="{{file.size}} bytes">
+            <input type="text" name="status[]" size="40" value="{{file.status}}"><br><br>
+        {%endfor%}       
     </p>
     <button type="submit">Upload</button>
 </form>
+<p>
+    
+</p>
 </body>
 </html>
