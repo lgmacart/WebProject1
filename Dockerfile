@@ -3,6 +3,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 RUN apt-get -y update
+RUN apt-get -y install python3-dev libpq-dev gcc
 RUN apt-get -y install curl
 
 COPY requirements.txt .

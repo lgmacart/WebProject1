@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href=".\static\test.css">
+    <style> 
+    </style>
+    <script>
+        updateList = function() {            
+            document.getElementById("resultDiv").innerHTML = "";
+            document.getElementById("header").innerHTML = "Files to upload:";        
+            var input = document.getElementById('file');
+            var output = document.getElementById('fileList');
+            var children = "";
+            for (var i = 0; i < input.files.length; ++i) {
+                children += '<label class=custom_label for="filename">File</label>';
+                children += '<input type="text" name="filename[]" size="40" value="' + input.files.item(i).name + '">'
+                children += '<label class=custom_label for="note">Note</label>'
+                children += '<input type="text" name="note[]" size="80" value=""><br><br>'
+            }
+            output.innerHTML = children;
+            document.getElementById("submit").disabled = false;
+        }
+
+        updateHeader = function() {
+            document.getElementById("header").innerHTML = "Upload status:";
+        }
+    </script>        
+</head>
+<body>
+<form method="POST" action="/multiupload" enctype="multipart/form-data">    
+    <p>
+        <input type="file" multiple name="file" id="file" onchange="javascript:updateList()">
+    </p>
+
+    <h3 id="header">
+        
+    </h3>
+
+    <div id="fileList"></div>
+
+    <div id="resultDiv">
+        <h3>
+            Upload status:
+        </h3>
+        {%for output in output_list%}
+            <label class=custom_label for="filename">File</label>
+            <input type="text" name="filename[]" size="40" value="{{output.name}}">
+            <input type="text" name="size[]" size="10" value="{{output.size}} bytes">
+            <input type="text" name="status[]" size="40" value="{{output.status}}"><br><br>
+        {%endfor%}       
+    </div>
+    <button type="submit" id="submit" disabled="disabled">Upload</button>
+</form>
+
+<p>
+    
+</p>
+</body>
+</html>

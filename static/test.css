@@ -16,8 +16,7 @@ body {
   
   .custom_label {
       font-weight: bold;
-      display: block; 
-      float: left; 
+      display: inline-block;       
       width: 50px;
   }
   
